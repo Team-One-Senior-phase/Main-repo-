@@ -1,12 +1,26 @@
-import './App.css';
+import React,{FC,useState} from 'react';
+import {Routes, Route} from 'react-router-dom'
+import Register from './components/Register'
+import Navbar from './components/partials/Navbar'
+import Home from './Pages/Home'
+import axios from 'axios'
 
-function App() {
+const App:FC=() => {
+  const [updated,setUpdated] = useState<boolean>(false)
+
+  var registerUser = (name:string,mail:string,password:string): void =>{
+    axios.post("http://localhost:3000/api/users/register",{name:name,mail:mail,password:password})
+    .then(() => setUpdated(!updated))
+  }
 
   return (
-    
-    <div className=" text-3xl font-bold underline">
-     <h1>Hello World</h1>
-    </div>
+    <>
+    <Navbar />
+    <Routes>
+      <Route path='/' element={<Home />}/>
+      <Route path='/register' element={<Register registerUser={registerUser}/>}/>
+    </Routes>
+    </>
   )
 }
 
