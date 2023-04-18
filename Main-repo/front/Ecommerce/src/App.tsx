@@ -9,7 +9,7 @@ const App:FC=() => {
   const [updated,setUpdated] = useState<boolean>(false)
 
   var registerUser = (name:string,mail:string,password:string): void =>{
-    axios.post("http://localhost:3000/api/users/register",{name:name,mail:mail,password:password})
+    axios.post("http://localhost:3000/api/users/register",{user_name:name,email:mail,password:password})
     .then(() => setUpdated(!updated))
   }
 
