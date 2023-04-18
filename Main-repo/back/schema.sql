@@ -2,16 +2,16 @@
 
 CREATE TABLE
     users (
-        user_id INT PRIMARY KEY,
+        user_id INT AUTO_INCREMENT PRIMARY KEY,
         user_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
-        phone VARCHAR(20),
-        address VARCHAR(255) NOT NULL,
-        city VARCHAR(255) NOT NULL,
-        state VARCHAR(255) NOT NULL,
-        zip_code VARCHAR(10) NOT NULL,
-        country VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) DEFAULT '',
+        address VARCHAR(255) NOT NULL DEFAULT '',
+        city VARCHAR(255) NOT NULL DEFAULT '',
+        state VARCHAR(255) NOT NULL DEFAULT '',
+        zip_code VARCHAR(10) NOT NULL DEFAULT '',
+        country VARCHAR(255) NOT NULL DEFAULT '',
         role ENUM('admin', 'customer') NOT NULL DEFAULT 'customer',
         is_banned BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -22,7 +22,7 @@ CREATE TABLE
 
 CREATE TABLE
     products (
-        product_id INT PRIMARY KEY,
+        product_id INT AUTO_INCREMENT PRIMARY KEY,
         product_name VARCHAR(255) NOT NULL,
         description TEXT,
         price DECIMAL(10, 2) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE
 
 CREATE TABLE
     categories (
-        category_id INT PRIMARY KEY,
+        category_id INT AUTO_INCREMENT PRIMARY KEY,
         category_name VARCHAR(255) NOT NULL,
         description TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -57,7 +57,7 @@ CREATE TABLE
 
 CREATE TABLE
     orders (
-        order_id INT PRIMARY KEY,
+        order_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         total_amount DECIMAL(10, 2) NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE
 
 CREATE TABLE
     reviews (
-        review_id INT PRIMARY KEY,
+        review_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         product_id INT,
         rating INT NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE
 
 CREATE TABLE
     promotions (
-        promotion_id INT PRIMARY KEY,
+        promotion_id INT AUTO_INCREMENT PRIMARY KEY,
         promotion_name VARCHAR(255) NOT NULL,
         discount DECIMAL(5, 2) NOT NULL,
         start_date DATE NOT NULL,
@@ -128,7 +128,7 @@ CREATE TABLE
 
 CREATE TABLE
     payments (
-        payment_id INT PRIMARY KEY,
+        payment_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         order_id INT,
         payment_method VARCHAR(255) NOT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE
 
 CREATE TABLE
     wishlists (
-        wishlist_id INT PRIMARY KEY,
+        wishlist_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         product_id INT,
         added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -156,7 +156,7 @@ CREATE TABLE
 
 CREATE TABLE
     cart_items (
-        cart_item_id INT PRIMARY KEY,
+        cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
         product_id INT,
         quantity INT NOT NULL,
