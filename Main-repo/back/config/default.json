@@ -1,6 +1,6 @@
 {
     "host": "localhost",
-    "user": "root",
+    "username": "root",
     "password": "root",
-    "database": "ecommerce"
+    "database": "RBKecomDB"
 }
