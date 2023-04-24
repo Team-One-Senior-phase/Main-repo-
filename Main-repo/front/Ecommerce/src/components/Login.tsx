@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-// @ts-ignore
-import logo from '../assets/logo.png';
 
 interface Props {
     loginUser: (mail: string, password: string) => void
