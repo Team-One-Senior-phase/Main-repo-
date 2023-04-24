@@ -1,27 +1,38 @@
-import React,{FC,useState} from 'react';
-import {Routes, Route} from 'react-router-dom'
-import Register from './components/Register'
-import Navbar from './components/partials/Navbar'
-import Home from './Pages/Home'
-import axios from 'axios'
+import React, { FC, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Register from "./components/Register";
+import Navbar from "./components/partials/Navbar";
+import Home from "./Pages/Home";
+import AllProducts from "./Pages/AllProducts";
+import axios from "axios";
 
-const App:FC=() => {
-  const [updated,setUpdated] = useState<boolean>(false)
+const App: FC = () => {
+  const [updated, setUpdated] = useState<boolean>(false);
 
-  var registerUser = (name:string,mail:string,password:string): void =>{
-    axios.post("http://localhost:3000/api/users/register",{user_name:name,email:mail,password:password})
-    .then(() => setUpdated(!updated))
-  }
+  var registerUser = (name: string, mail: string, password: string): void => {
+    axios
+      .post("http://localhost:3000/api/users/register", {
+        user_name: name,
+        email: mail,
+        password: password,
+      })
+      .then(() => setUpdated(!updated));
+  };
 
   return (
     <>
-    <Navbar />
-    <Routes>
-      <Route path='/' element={<Home />}/>
-      <Route path='/register' element={<Register registerUser={registerUser}/>}/>
-    </Routes>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/register"
+          element={<Register registerUser={registerUser} />}
+        />
+        <Route path="/allproducts" element={<AllProducts />} />
+        {/* <Route path="/product" element={<Product />} /> */}
+      </Routes>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
