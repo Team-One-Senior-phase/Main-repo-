@@ -18,8 +18,10 @@ const App:FC=() => {
   var loginUser = (mail:string,password:string):void =>{
     axios.post("http://localhost:3000/api/users/login",{email:mail,password:password})
     .then(response => {
+      console.log(response.data)
       if (response.data.message === "User logged in successfully") {
         console.log(response.data.message)
+
         navigate("/")
       }
     })
