@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 // @ts-ignore
-import logo from '../../../assets/Images/logo.png';
+import logo from '../../assets/logo.png';
 import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {

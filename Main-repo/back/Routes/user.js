@@ -9,6 +9,6 @@ router.post('/login', loginUser);
 router.put('/:userId', auth, updateUser);
 router.get('/:userId', auth, getUserById);
 router.delete('/:userId', auth, deleteUser);
-router.get('/', auth, isAdmin , getUsers);
+router.get('/' , getUsers);
 
 module.exports = router;
