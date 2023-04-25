@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+// @ts-ignore
+import logo from '../assets/logo.png';
+import { useForm } from "react-hook-form";
+
+type LoginForm = {
+    mail: string
+    password: string
+}
 
 interface Props {
     loginUser: (mail: string, password: string) => void
@@ -7,20 +15,23 @@ interface Props {
 const Login = ({ loginUser }: Props) => {
     const [mail, setMail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
-    
-    const imgStyle = {
-        display: "flex",
-        marginLeft: '800px',
-        marginRight: '20px'
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<LoginForm>()
+
+    const onSubmit = (data: LoginForm) => {
+        console.log(data)
     }
 
     return (
-        <div>
-            <div className="flex flex-col items-center min-h-screen pt-4 sm:justify sm:pt-0 bg-gray-50">
+        <div onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
                 <div>
                     <a href="/">
                         <h3 className="text-4xl font-bold text-blue-600">
-                            Logo
+                        <img src={logo} style={{width:"160px", height:"160px"}} />
                         </h3>
                     </a>
                 </div>
@@ -36,11 +47,19 @@ const Login = ({ loginUser }: Props) => {
                             <div className="flex flex-col items-start">
                                 <input
                                     type="email"
-                                    name="email"
+                                    placeholder="Email"
+                                    {...register("mail", {
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: "Invalid email address",
+                                        },
+                                    })}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     value={mail}
                                     onChange={(e) => setMail(e.target.value)}
                                 />
+                                {errors.mail && <p style={{ color: "red" }}>{errors.mail.message}</p>}
                             </div>
                         </div>
                         <div className="mt-4">
@@ -53,11 +72,19 @@ const Login = ({ loginUser }: Props) => {
                             <div className="flex flex-col items-start">
                                 <input
                                     type="password"
-                                    name="password"
+                                    placeholder="Password"
+                                    {...register("password", {
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 6,
+                                            message: "Password must be at least 6 characters long",
+                                        },
+                                    })}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+                                {errors.password && <p style={{color:"red"}}>{errors.password.message}</p>}
                             </div>
                         </div>
                         <div className="flex items-center justify-end mt-4">
@@ -68,10 +95,9 @@ const Login = ({ loginUser }: Props) => {
                                 not registered?
                             </a>
                             <button
-                                type="button"
+                                type="submit"
                                 className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
-                                onClick={() => loginUser(mail, password)}
-                            >
+                                onClick={() => loginUser(mail, password)}>
                                 Login
                             </button>
                         </div>
