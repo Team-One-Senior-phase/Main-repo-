@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
-import { useForm, SubmitHandler,useWatch} from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 
 type RegistrationForm = {
     name: string
     mail: string
     password: string
     confirmPassword: string
-};
+}
+interface IUser {
+    name: string
+    email: string
+    password: string
+}
 
 interface Props {
     registerUser: (name: string, mail: string, password: string) => void
+    users: IUser[]
 }
 
-const Register = ({ registerUser }: Props) => {
+const Register = ({ registerUser, users }: Props) => {
     const [name, setName] = useState<string>("")
     const [mail, setMail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [confirm, setConfirm] = useState<string>("")
+    const [showValid, setShowValid] = useState<boolean>(false)
+    const [showInvalid, setShowInvalid] = useState<boolean>(false)
 
     const {
         register,
@@ -29,6 +37,21 @@ const Register = ({ registerUser }: Props) => {
 
     const onSubmit: SubmitHandler<RegistrationForm> = async (data) => {
         console.log(data)
+    }
+
+    var fetchUserAndAdd = (mail: string, users: IUser[]): void => {
+        console.log(users)
+        let temp = users.filter(user => user.email === mail)
+        console.log(temp)
+        if (temp.length === 0) {
+            registerUser(name, mail, password)
+            setShowValid(true)
+            setShowInvalid(false)
+        }
+        else {
+            setShowInvalid(true)
+            setShowValid(false)
+        }
     }
 
     return (
@@ -130,21 +153,23 @@ const Register = ({ registerUser }: Props) => {
                                     {...register('confirmPassword', {
                                         required: 'Confirm Password is required',
                                         validate: (value) => value === password || 'Passwords do not match',
-                                      })}
+                                    })}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     value={confirm}
                                     onChange={(e) => setConfirm(e.target.value)} />
-                                    {errors.confirmPassword && <p style={{color:"red"}}>{errors.confirmPassword.message}</p>}
+                                {errors.confirmPassword && <p style={{ color: "red" }}>{errors.confirmPassword.message}</p>}
                             </div>
                         </div>
                         <div className="flex items-center mt-4">
                             <button
                                 type="submit"
                                 className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-700 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-                                onClick={() => { registerUser(name, mail, password); handleSubmit(onSubmit) }}>
+                                onClick={() => { fetchUserAndAdd(mail, users) }}>
                                 Register
                             </button>
                         </div>
+                        {showValid ? <><br /><h4 style={{ color: "green", textAlign: "center", fontWeight: "bold" }}>Account has been successfully registered!</h4></> : null}
+                        {showInvalid ? <><br /><h4 style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>Email adress already used for an other account!</h4></> : null}
                     </form>
                     <div className="mt-4 text-grey-600">
                         Already have an account?{" "}

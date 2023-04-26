@@ -5,9 +5,17 @@ import Login from './components/Login'
 import Navbar from './components/partials/Navbar'
 import Home from './Pages/Home'
 import axios from 'axios'
+import ResetPassword from './components/ResetPassword';
+
+interface IUser{
+  name:string
+  email:string
+  password:string
+}
 
 const App:FC=() => {
   const [updated,setUpdated] = useState<boolean>(false)
+  const [users,setUsers] = useState<IUser[]>([])
   const navigate = useNavigate()
 
   var registerUser = (name:string,mail:string,password:string): void =>{
@@ -28,13 +36,18 @@ const App:FC=() => {
     .catch(() => console.log("invalid user"))
   }
 
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/users').then(response => setUsers(response.data))
+  }, [updated])
+
   return (
     <>
     <Navbar />
     <Routes>
       <Route path='/' element={<Home />}/>
-      <Route path='/register' element={<Register registerUser={registerUser}/>}/>
-      <Route path='/login' element={<Login loginUser={loginUser}/>}/>
+      <Route path='/register' element={<Register registerUser={registerUser} users={users} />}/>
+      <Route path='/login' element={<Login loginUser={loginUser} users={users}/>}/>
+      <Route path='/resetPassword' element={<ResetPassword />}/>
     </Routes>
     </>
   )

@@ -10,11 +10,21 @@ type LoginForm = {
 
 interface Props {
     loginUser: (mail: string, password: string) => void
+    users: IUser[]
 }
 
-const Login = ({ loginUser }: Props) => {
+interface IUser {
+    name: string
+    email: string
+    password: string
+}
+
+const Login = ({ loginUser, users }: Props) => {
     const [mail, setMail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
+    const [showInvalidUser, setShowInvalidUser] = useState<boolean>(false)
+    const [showInvalidPass, setShowInvalidPass] = useState<boolean>(false)
+
     const {
         register,
         handleSubmit,
@@ -25,13 +35,32 @@ const Login = ({ loginUser }: Props) => {
         console.log(data)
     }
 
+    var fetchUserAndLogin = (mail: string, password: string, users: IUser[]): void => {
+        console.log(users)
+        let temp = users.filter(user => user.email === mail)
+        console.log(temp)
+        console.log(temp[0].password)
+        if (temp.length === 0) {
+            setShowInvalidUser(true)
+        }
+        else if (temp[0].password === password) {
+            loginUser(mail, password)
+            setShowInvalidUser(false)
+            setShowInvalidPass(false)
+        }
+        else {
+            setShowInvalidPass(true)
+            setShowInvalidUser(false)
+        }
+    }
+
     return (
         <div onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-gray-50">
                 <div>
                     <a href="/">
                         <h3 className="text-4xl font-bold text-blue-600">
-                        <img src={logo} style={{width:"160px", height:"160px"}} />
+                            <img src={logo} style={{ width: "160px", height: "160px" }} />
                         </h3>
                     </a>
                 </div>
@@ -60,6 +89,7 @@ const Login = ({ loginUser }: Props) => {
                                     onChange={(e) => setMail(e.target.value)}
                                 />
                                 {errors.mail && <p style={{ color: "red" }}>{errors.mail.message}</p>}
+                                {showInvalidUser && <p style={{ color: "red" }}>Invalid User</p>}
                             </div>
                         </div>
                         <div className="mt-4">
@@ -84,8 +114,15 @@ const Login = ({ loginUser }: Props) => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
-                                {errors.password && <p style={{color:"red"}}>{errors.password.message}</p>}
+                                {showInvalidPass && <p style={{ color: "red" }}>Password invalid</p>}
+                                {errors.password && <p style={{ color: "red" }}>{errors.password.message}</p>}
                             </div>
+                            <a
+                                className="text-sm text-blue-700 hover:text-gray-900"
+                                href="/resetPassword"
+                            >
+                                Forgot password
+                            </a>
                         </div>
                         <div className="flex items-center justify-end mt-4">
                             <a
@@ -97,7 +134,7 @@ const Login = ({ loginUser }: Props) => {
                             <button
                                 type="submit"
                                 className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
-                                onClick={() => loginUser(mail, password)}>
+                                onClick={() => fetchUserAndLogin(mail, password, users)}>
                                 Login
                             </button>
                         </div>
