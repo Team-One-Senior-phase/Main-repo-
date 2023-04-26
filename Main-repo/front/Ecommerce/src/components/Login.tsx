@@ -11,15 +11,11 @@ type LoginForm = {
 interface Props {
     loginUser: (mail: string, password: string) => void
     showInvalidUser: boolean
+    getUserName: (mail: string) => void
+    handleLogin:()=>void
 }
 
-interface IUser {
-    name: string
-    email: string
-    password: string
-}
-
-const Login = ({ loginUser, showInvalidUser }: Props) => {
+const Login = ({ loginUser, showInvalidUser, getUserName, handleLogin }: Props) => {
     const [mail, setMail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
 
@@ -94,7 +90,6 @@ const Login = ({ loginUser, showInvalidUser }: Props) => {
                                 />
                                 {errors.password && <p style={{ color: "red" }}>{errors.password.message}</p>}
                             </div>
-                            {showInvalidUser && <p style={{ color: "red" }}>Invalid mail or password</p>}
                             <a
                                 className="text-sm text-blue-700 hover:text-gray-900"
                                 href="/resetPassword"
@@ -102,6 +97,7 @@ const Login = ({ loginUser, showInvalidUser }: Props) => {
                                 Forgot password
                             </a>
                         </div>
+                        {showInvalidUser && <><br /><h4 style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>Invalid mail or password</h4></>}
                         <div className="flex items-center justify-end mt-4">
                             <a
                                 className="text-sm text-gray-600 underline hover:text-gray-900"
@@ -112,7 +108,7 @@ const Login = ({ loginUser, showInvalidUser }: Props) => {
                             <button
                                 type="submit"
                                 className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
-                                onClick={() => loginUser(mail, password)}>
+                                onClick={() => {loginUser(mail, password); getUserName(mail); handleLogin()}}>
                                 Login
                             </button>
                         </div>

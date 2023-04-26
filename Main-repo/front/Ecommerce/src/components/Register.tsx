@@ -8,7 +8,7 @@ type RegistrationForm = {
     confirmPassword: string
 }
 interface IUser {
-    name: string
+    user_name: string
     email: string
     password: string
 }
@@ -25,6 +25,7 @@ const Register = ({ registerUser, users }: Props) => {
     const [confirm, setConfirm] = useState<string>("")
     const [showValid, setShowValid] = useState<boolean>(false)
     const [showInvalid, setShowInvalid] = useState<boolean>(false)
+    const [validConfirmPass, setValidConfirmPass] = useState(false)
 
     const {
         register,
@@ -52,6 +53,10 @@ const Register = ({ registerUser, users }: Props) => {
             setShowInvalid(true)
             setShowValid(false)
         }
+    }
+
+   var enableRegisterButton = (): void => {
+    setValidConfirmPass(true)
     }
 
     return (
