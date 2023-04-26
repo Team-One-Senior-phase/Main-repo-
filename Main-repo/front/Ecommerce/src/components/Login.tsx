@@ -10,7 +10,7 @@ type LoginForm = {
 
 interface Props {
     loginUser: (mail: string, password: string) => void
-    users: IUser[]
+    showInvalidUser: boolean
 }
 
 interface IUser {
@@ -19,11 +19,9 @@ interface IUser {
     password: string
 }
 
-const Login = ({ loginUser, users }: Props) => {
+const Login = ({ loginUser, showInvalidUser }: Props) => {
     const [mail, setMail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
-    const [showInvalidUser, setShowInvalidUser] = useState<boolean>(false)
-    const [showInvalidPass, setShowInvalidPass] = useState<boolean>(false)
 
     const {
         register,
@@ -33,25 +31,6 @@ const Login = ({ loginUser, users }: Props) => {
 
     const onSubmit = (data: LoginForm) => {
         console.log(data)
-    }
-
-    var fetchUserAndLogin = (mail: string, password: string, users: IUser[]): void => {
-        console.log(users)
-        let temp = users.filter(user => user.email === mail)
-        console.log(temp)
-        console.log(temp[0].password)
-        if (temp.length === 0) {
-            setShowInvalidUser(true)
-        }
-        else if (temp[0].password === password) {
-            loginUser(mail, password)
-            setShowInvalidUser(false)
-            setShowInvalidPass(false)
-        }
-        else {
-            setShowInvalidPass(true)
-            setShowInvalidUser(false)
-        }
     }
 
     return (
@@ -89,7 +68,6 @@ const Login = ({ loginUser, users }: Props) => {
                                     onChange={(e) => setMail(e.target.value)}
                                 />
                                 {errors.mail && <p style={{ color: "red" }}>{errors.mail.message}</p>}
-                                {showInvalidUser && <p style={{ color: "red" }}>Invalid User</p>}
                             </div>
                         </div>
                         <div className="mt-4">
@@ -114,9 +92,9 @@ const Login = ({ loginUser, users }: Props) => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
-                                {showInvalidPass && <p style={{ color: "red" }}>Password invalid</p>}
                                 {errors.password && <p style={{ color: "red" }}>{errors.password.message}</p>}
                             </div>
+                            {showInvalidUser && <p style={{ color: "red" }}>Invalid mail or password</p>}
                             <a
                                 className="text-sm text-blue-700 hover:text-gray-900"
                                 href="/resetPassword"
@@ -134,7 +112,7 @@ const Login = ({ loginUser, users }: Props) => {
                             <button
                                 type="submit"
                                 className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
-                                onClick={() => fetchUserAndLogin(mail, password, users)}>
+                                onClick={() => loginUser(mail, password)}>
                                 Login
                             </button>
                         </div>
