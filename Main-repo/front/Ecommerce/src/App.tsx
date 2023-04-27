@@ -5,7 +5,9 @@ import Login from './components/Login'
 import Navbar from './components/partials/Navbar'
 import Home from './Pages/Home'
 import axios from 'axios'
-import ResetPassword from './components/ResetPassword';
+import ResetPassword from './components/ResetPassword'
+import Setting from './components/Setting'
+import ProductList from './components/ProductList';
 
 interface IUser {
   user_name: string
@@ -60,10 +62,11 @@ const App: FC = () => {
     <>
       <Navbar username={username} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<ProductList />} />
         <Route path='/register' element={<Register registerUser={registerUser} users={users} />} />
         <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} getUserName={getUserName} handleLogin={handleLogin} />} />
         <Route path='/resetPassword' element={<ResetPassword />} />
+        <Route path='/setting' element={<Setting />} />
       </Routes>
     </>
   )
