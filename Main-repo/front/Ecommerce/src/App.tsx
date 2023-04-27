@@ -15,9 +15,18 @@ interface IUser {
   password: string
 }
 
+interface IProduct {
+  product_name: string
+  description: string
+  price: number
+  stock: number
+  image: string
+}
+
 const App: FC = () => {
   const [updated, setUpdated] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
+  const [products, setProducts] = useState<IProduct[]>([])
   const [showInvalidUser, setShowInvalidUser] = useState<boolean>(false)
   const [username, setUsername] = useState("")
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -58,11 +67,15 @@ const App: FC = () => {
     axios.get('http://localhost:3000/api/users').then(response => setUsers(response.data))
   }, [updated])
 
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/products').then(response => setProducts(response.data.products))
+  }, [updated])
+
   return (
     <>
       <Navbar username={username} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
-        <Route path='/' element={<ProductList />} />
+        <Route path='/' element={<ProductList products={products} />} />
         <Route path='/register' element={<Register registerUser={registerUser} users={users} />} />
         <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} getUserName={getUserName} handleLogin={handleLogin} />} />
         <Route path='/resetPassword' element={<ResetPassword />} />

@@ -73,7 +73,7 @@ const Navbar = ({ username, isLoggedIn, handleLogout }: Props) => {
                 </div>
                 <input
                   type="text"
-                  className="block w-full py-2 pl-10 pr-3 leading-5 rounded-md border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="w-full py-2 pl-10 pr-3 leading-8 rounded-md border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Search"
                 />
               </div>
