@@ -12,9 +12,10 @@ interface IProduct {
 
 interface Props {
     product: IProduct
+    addToCart:(product:IProduct)=> void
 }
 
-const ProductDetails = ({ product }: Props) => {
+const ProductDetails = ({ product,addToCart }: Props) => {
     return (
         <section className="flex flex-col gap-16 py-10 bg-gray-100 bg-grey">
             <div className="container mx-auto flex justify-around  items-center w-[80%]">
@@ -31,7 +32,7 @@ const ProductDetails = ({ product }: Props) => {
                         <p className="text-gray-800">{product.description}</p>
                     </div>
                     <button
-                        onClick={() => console.log("to complete")}
+                        onClick={() => addToCart(product)}
                         className="bg-sky-500 text-sky-50 px-2 py-1 mt-4"
                     >
                         add to cart

@@ -10,11 +10,15 @@ import Setting from './components/Setting'
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import ProductDetails from './components/ProductDetails';
+import Orders from './components/Orders';
+import OneOrder from './components/OneOrder';
 
 interface IUser {
+  user_id: number
   user_name: string
   email: string
   password: string
+  adress: string
 }
 
 interface IProduct {
@@ -26,66 +30,35 @@ interface IProduct {
   image: string
 }
 
-type Item = {
-  id: number;
-  product_name: string;
-  description: string;
-  price: number;
-  stock: number;
-  image: string;
-}
-
 const App: FC = () => {
   const [updated, setUpdated] = useState<boolean>(false)
   const [users, setUsers] = useState<IUser[]>([])
   const [products, setProducts] = useState<IProduct[]>([])
   const [oneProduct, setOneProduct] = useState<IProduct>({
-    product_id: 2,
-    product_name: "ITEL A33 PLUS/1GB/32GB/Blue smartphone",
-    description: "Dual SIM - Screen 5 - Quad-Core Processor - 1GB RAM - 32GB Storage - Cameras: 5MP (rear), 2MP (front end) - Android 11 - Fingerprint Reader - Battery 3020 mAh - 3G - WiFi - Bluetooth - Color Blue",
-    price: 189.00,
-    stock: 5,
-    image: "https://www.tunisianet.com.tn/285057-large/smartphone-itel-a33-plus-1-go-32-go-bleu.jpg"
+    product_id: 0,
+    product_name: "",
+    description: "",
+    price: 0,
+    stock: 0,
+    image: ""
   })
   const [showInvalidUser, setShowInvalidUser] = useState<boolean>(false)
   const [username, setUsername] = useState<string>("")
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [items, setItems] = useState<Item[]>([
-    {
-      id: 1,
-      product_name: 'Product 1',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      price: 9.99,
-      stock: 10,
-      image: 'https://picsum.photos/id/1/200/200',
-    },
-    {
-      id: 2,
-      product_name: 'Product 2',
-      description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      price: 19.99,
-      stock: 5,
-      image: 'https://picsum.photos/id/2/200/200',
-    },
-    {
-      id: 3,
-      product_name: 'Product 3',
-      description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      price: 29.99,
-      stock: 2,
-      image: 'https://picsum.photos/id/3/200/200',
-    },
-  ])
-  
+  const [userId, setUserId] = useState<number>(0)
+  const [items, setItems] = useState<IProduct[]>([])
+  const [searchedProducts, setSearchedProducts] = useState<IProduct[]>([])
+  const [searchClicked, setSearchClicked] = useState<boolean>(false)
+
   const navigate = useNavigate()
 
-  const getProduct = (id:number) : void => {
+  const getProduct = (id: number): void => {
     let index = products.findIndex(product => product.product_id === id)
     if (index) {
       console.log(products[index].product_id)
       setOneProduct(products[index])
-    } 
+    }
   }
+
   const getUserName = (mail: string): void => {
     let index = users.findIndex(user => user.email === mail)
     if (index) {
@@ -93,13 +66,16 @@ const App: FC = () => {
     }
   }
 
-  const handleLogin = (): void => {
-    setIsLoggedIn(true)
+  const getUserId = (mail: string): void => {
+    let index = users.findIndex(user => user.email === mail)
+    if (index) {
+      setUserId(users[index].user_id)
+    }
   }
 
   const handleLogout = (): void => {
-    setIsLoggedIn(false)
     navigate("/login")
+    localStorage.removeItem('JWT token')
   }
 
   var registerUser = (name: string, mail: string, password: string): void => {
@@ -109,13 +85,47 @@ const App: FC = () => {
 
   var loginUser = (mail: string, password: string): void => {
     axios.post("http://localhost:3000/api/users/login", { email: mail, password: password })
-      .then(() => {
+      .then(response => {
         setShowInvalidUser(false)
         navigate("/")
+        localStorage.setItem('JWT token', response.data.token)
       })
       .catch(() => setShowInvalidUser(true)
       )
   }
+
+  const searchProduct = (query: string): void => {
+    setSearchClicked(true)
+    const temp = products.filter(product => product.product_name.includes(query) || product.description.includes(query))
+    setSearchedProducts(temp)
+  }
+
+  const updateAdress = (id: number, newAdress: string): void => {
+    const temp = users.map(user => user.user_id === id ? { ...user, adress: newAdress } : user)
+    setUsers(temp)
+  }
+
+  const updatePassword = (id: number, newPassword: string): void => {
+    const temp = users.map(user => user.user_id === id ? { ...user, password: newPassword } : user)
+    setUsers(temp)
+  }
+
+  const updatePhone = (id: number, newPhone: string): void => {
+    const temp = users.map(user => user.user_id === id ? { ...user, phone: newPhone } : user)
+    setUsers(temp)
+  }
+
+  const addToCart = (product: IProduct) => {
+    const exist = items.find((item) => item.product_id === product.product_id)
+    if (exist) {
+      let temp = items.map((item) =>
+        item.product_id === product.product_id ? { ...item, stock: item.stock + 1 } : item
+      )
+      setItems(temp)
+    } else {
+      setItems([...items, { ...product, stock: 1 }])
+    }
+  };
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/users').then(response => setUsers(response.data))
@@ -127,15 +137,18 @@ const App: FC = () => {
 
   return (
     <>
-      <Navbar username={username} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <Navbar username={username} handleLogout={handleLogout} searchProduct={searchProduct} />
       <Routes>
-        <Route path='/' element={<ProductList products={products} getProduct={getProduct} />} />
+        {searchClicked ? <Route path='/' element={<ProductList products={searchedProducts} getProduct={getProduct} addToCart={addToCart} />} />
+          : <Route path='/' element={<ProductList products={products} getProduct={getProduct} addToCart={addToCart} />} />}
         <Route path='/register' element={<Register registerUser={registerUser} users={users} />} />
-        <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} getUserName={getUserName} handleLogin={handleLogin} />} />
-        <Route path='/cart' element={ <Cart items={items} setItems={setItems} />} />
-        <Route path='/productDetails' element={ <ProductDetails product={oneProduct} />} />
-        <Route path='/resetPassword' element={<ResetPassword />} />
+        <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} getUserName={getUserName} />} />
+        <Route path='/cart' element={<Cart items={items} setItems={setItems} />} />
+        <Route path='/productDetails' element={<ProductDetails product={oneProduct} addToCart={addToCart} />} />
+        <Route path='/resetPassword' element={<ResetPassword users={users} userId={userId} getUserId={getUserId} updatePassword={updatePassword} />} />
         <Route path='/setting' element={<Setting />} />
+        <Route path='/orders' element={<Orders />} />
+        <Route path='/order' element={<OneOrder />} />
       </Routes>
     </>
   )
