@@ -1,82 +1,76 @@
-import React,{FC,useEffect,useState} from 'react';
-import {Routes, Route, useNavigate} from 'react-router-dom'
+import React, { FC, useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Register from './components/Register'
 import Login from './components/Login'
 import Navbar from './components/partials/Navbar'
 import Home from './Pages/Home'
 import Cart from './components/Cart';
 import axios from 'axios'
-import Checkout from './components/Checkout';
+import ResetPassword from './components/ResetPassword'
+import Setting from './components/Setting'
+import ProductList from './components/ProductList';
 
-
-
-type Item = {
-  id: number;
-  product_name: string;
-  description: string;
-  price: number;
-  stock: number;
-  image: string;
+interface IUser {
+  user_name: string
+  email: string
+  password: string
 }
 
-const App:FC=() => {
-  const [updated,setUpdated] = useState<boolean>(false)
-  const [items, setItems] = useState<Item[]>([
-    {
-      id: 1,
-      product_name: 'Product 1',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      price: 9.99,
-      stock: 10,
-      image: 'https://picsum.photos/id/1/200/200',
-    },
-    {
-      id: 2,
-      product_name: 'Product 2',
-      description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      price: 19.99,
-      stock: 5,
-      image: 'https://picsum.photos/id/2/200/200',
-    },
-    {
-      id: 3,
-      product_name: 'Product 3',
-      description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      price: 29.99,
-      stock: 2,
-      image: 'https://picsum.photos/id/3/200/200',
-    },
-  ])
+const App: FC = () => {
+  const [updated, setUpdated] = useState<boolean>(false)
+  const [users, setUsers] = useState<IUser[]>([])
+  const [showInvalidUser, setShowInvalidUser] = useState<boolean>(false)
+  const [username, setUsername] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate()
 
-  var registerUser = (name:string,mail:string,password:string): void =>{
-    axios.post("http://localhost:3000/api/users/register",{user_name:name,email:mail,password:password})
-    .then(()=>setUpdated(!updated))
+  const getUserName = (mail: string): void => {
+    let index = users.findIndex(user => user.email === mail)
+    if (index) {
+      setUsername(users[index].user_name)
+    }
   }
 
-  var loginUser = (mail:string,password:string):void =>{
-    axios.post("http://localhost:3000/api/users/login",{email:mail,password:password})
-    .then(response => {
-      console.log(response.data)
-      if (response.data.message === "User logged in successfully") {
-        console.log(response.data.message)
+  const handleLogin = (): void => {
+    setIsLoggedIn(true)
+  }
 
+  const handleLogout = (): void => {
+    setIsLoggedIn(false)
+    navigate("/login")
+  }
+
+  var registerUser = (name: string, mail: string, password: string): void => {
+    axios.post("http://localhost:3000/api/users/register", { user_name: name, email: mail, password: password })
+      .then(() => setUpdated(!updated))
+  }
+
+  var loginUser = (mail: string, password: string): void => {
+    axios.post("http://localhost:3000/api/users/login", { email: mail, password: password })
+      .then(() => {
+        setShowInvalidUser(false)
         navigate("/")
-      }
-    })
-    .catch(() => console.log("invalid user"))
+      })
+      .catch(() => setShowInvalidUser(true)
+      )
   }
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/users').then(response => setUsers(response.data))
+  }, [updated])
 
   return (
     <>
-    <Navbar />
-    <Routes>
-      <Route path='/' element={<Home />}/>
-      <Route path='/register' element={<Register registerUser={registerUser}/>}/>
-      <Route path='/login' element={<Login loginUser={loginUser}/>}/>
-      <Route path='/cart' element={ <Cart items={items} setItems={setItems} />} />
-      <Route path="/checkout" element={<Checkout items={[]}/>}/>
-    </Routes>
+
+      <Navbar username={username} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <Routes>
+        <Route path='/' element={<ProductList />} />
+        <Route path='/register' element={<Register registerUser={registerUser} users={users} />} />
+        <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} getUserName={getUserName} handleLogin={handleLogin} />} />
+        <Route path='/resetPassword' element={<ResetPassword />} />
+        <Route path='/setting' element={<Setting />} />
+      </Routes>
+
     </>
   )
 }
