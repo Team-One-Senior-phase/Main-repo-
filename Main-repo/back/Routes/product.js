@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Product = require('../ORM/product.model.js');
 const auth = require('../middleware/auth.js');
 const isAdmin = require('../middleware/isAdmin');
 const productController = require('../Controllers/productController.js');

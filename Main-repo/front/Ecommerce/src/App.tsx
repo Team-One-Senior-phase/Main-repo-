@@ -4,6 +4,7 @@ import Register from './components/Register'
 import Login from './components/Login'
 import Navbar from './components/partials/Navbar'
 import Home from './Pages/Home'
+import Cart from './components/Cart';
 import axios from 'axios'
 import ResetPassword from './components/ResetPassword'
 import Setting from './components/Setting'
@@ -60,6 +61,7 @@ const App: FC = () => {
 
   return (
     <>
+
       <Navbar username={username} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
         <Route path='/' element={<ProductList />} />
@@ -68,6 +70,7 @@ const App: FC = () => {
         <Route path='/resetPassword' element={<ResetPassword />} />
         <Route path='/setting' element={<Setting />} />
       </Routes>
+
     </>
   )
 }
