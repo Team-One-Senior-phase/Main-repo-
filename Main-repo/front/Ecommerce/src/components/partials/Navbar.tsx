@@ -3,14 +3,23 @@ import { Link } from 'react-router-dom';
 // @ts-ignore
 import logo from '../../assets/logo.png';
 import { FaShoppingCart } from 'react-icons/fa';
+import jwt from 'jwt-decode';
+
+interface IUser {
+  user_id: number
+  user_name: string
+  email: string
+  password: string
+  adress: string
+}
 
 interface Props {
-  username: string
+  username:string
   handleLogout: () => void
   searchProduct: (query:string) => void
 }
 
-const Navbar = ({ username, handleLogout, searchProduct }: Props) => {
+const Navbar = ({username, handleLogout, searchProduct }: Props) => {
   const [isLogoZoomed, setIsLogoZoomed] = useState(false)
   const [query,setQuery] = useState<string>("")
 
@@ -21,10 +30,10 @@ const Navbar = ({ username, handleLogout, searchProduct }: Props) => {
   const logoclassNamees = `h-12 w-12 transition-all duration-500 transform ${isLogoZoomed ? 'scale-150' : ''
     }`;
 
-  const loggedIn = localStorage.getItem("JWT token")
+  const token = localStorage.getItem("JWT token")
 
   return (
-    loggedIn === null ?
+    token === null ?
       <nav className="bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -108,7 +117,7 @@ const Navbar = ({ username, handleLogout, searchProduct }: Props) => {
             <div className="flex-1 flex justify">
               <div className="flex items-center justify-center space-x-4">
                 <a href="/orders" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Orders</a>
-                <a href="#" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Payments</a>
+                <a href="/payement" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Payments</a>
                 <a href="/cart" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Cart</a>
               </div>
             </div>

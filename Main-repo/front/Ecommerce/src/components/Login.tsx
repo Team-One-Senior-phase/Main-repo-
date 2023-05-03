@@ -11,10 +11,10 @@ type LoginForm = {
 interface Props {
     loginUser: (mail: string, password: string) => void
     showInvalidUser: boolean
-    getUserName: (mail: string) => void
+    getUserName:() => void
 }
 
-const Login = ({ loginUser, showInvalidUser, getUserName }: Props) => {
+const Login = ({ loginUser, showInvalidUser, getUserName}: Props) => {
     const [mail, setMail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
 
@@ -107,7 +107,7 @@ const Login = ({ loginUser, showInvalidUser, getUserName }: Props) => {
                             <button
                                 type="submit"
                                 className="inline-flex items-center px-4 py-2 ml-4 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-900 border border-transparent rounded-md active:bg-gray-900 false"
-                                onClick={() => {loginUser(mail, password); getUserName(mail)}}>
+                                onClick={() => { loginUser(mail, password); getUserName()}}>
                                 Login
                             </button>
                         </div>

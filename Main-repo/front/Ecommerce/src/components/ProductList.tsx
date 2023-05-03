@@ -13,7 +13,7 @@ interface IProduct {
 interface Props {
     products: IProduct[]
     getProduct:(id:number) => void
-    addToCart:(product:IProduct) =>void
+    addToCart:(user_id:number, product_id:number) =>void
 }
 
 const ProductList = ({ products, getProduct, addToCart}: Props) => {

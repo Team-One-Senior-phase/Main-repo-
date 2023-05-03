@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
+import jwt from 'jwt-decode'
 
 interface IProduct {
     product_id: number
@@ -12,10 +13,28 @@ interface IProduct {
 
 interface Props {
     product: IProduct
-    addToCart:(product:IProduct)=> void
+    addToCart:(user_id:number, product_id:number)=> void
 }
 
+type TokenUser = {
+    user_id: number,
+    iat: number
+  }
+
 const ProductDetails = ({ product,addToCart }: Props) => {
+
+    const handleAddToCart = (): void => {
+        const token = localStorage.getItem("JWT token")
+        const user = jwt(JSON.stringify(token)) as TokenUser
+        console.log(user.user_id)
+        if(user.user_id){
+          addToCart(user.user_id,product.product_id)
+        }
+        else{
+          window.confirm('You have to login to add product to your cart')
+        }
+      }
+
     return (
         <section className="flex flex-col gap-16 py-10 bg-gray-100 bg-grey">
             <div className="container mx-auto flex justify-around  items-center w-[80%]">
@@ -32,7 +51,7 @@ const ProductDetails = ({ product,addToCart }: Props) => {
                         <p className="text-gray-800">{product.description}</p>
                     </div>
                     <button
-                        onClick={() => addToCart(product)}
+                        onClick={() => handleAddToCart()}
                         className="bg-sky-500 text-sky-50 px-2 py-1 mt-4"
                     >
                         add to cart

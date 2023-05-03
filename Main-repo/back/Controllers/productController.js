@@ -32,7 +32,6 @@ async function createProduct(req, res) {
   }
 }
 
-
 async function getAllProducts(req, res) {
     try {
       // Fetch all products from the database
