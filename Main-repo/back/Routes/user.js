@@ -9,7 +9,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.put('/:userId', updateUser);
 router.get('/:userId', auth, getUserById);
-router.delete('/:userId', auth, deleteUser);
+router.delete('/:userId', deleteUser);
 router.get('/' , getUsers);
 router.get('/orders/:user_id',orderController.getOrdersByUserId)
 
