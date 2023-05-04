@@ -112,34 +112,5 @@ async function getCartItemsHandler(req, res) {
   }
 }
 
-// Update an existing cart by id 
-async function updateQuantity(req, res) {
-  try {
-    const { cart_id } = req.params;
-    const {quantity} = req.body;
-      
-    // Check if cart exists
-    const cart = await Cart.findByPk(cart_id);
-    if (!cart) {
-      return res.status(404).json({ message: 'item not found' });
-    }
 
-    // Check if new quantity is valid
-    if (cart.quantity===1 && quantity===0) {
-      return res.status(404).json({ message: 'item quantity cannot be less then 1' });
-    }
-
-    if (cart.quantity=== cart.stock && quantity===cart.stock+1) {
-      return res.status(404).json({ message: 'insufficient stock' });
-    }
-
-    //update quantity
-    cart.quantity = quantity
-    await cart.save()
-    res.status(200).json({ message: 'Quantity updated successfully', cart });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  }
-module.exports = { addToCart, getAllCartItems, deleteCartItem, getCartItemsHandler, updateQuantity };
+module.exports = { addToCart , deleteCartItem, getCartItemsHandler};
