@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 
-interface IProduct {
+interface Item {
+    cart_id: number
+    user_id: number
     product_id: number
     product_name: string
     description: string
     price: number
     stock: number
+    quantity: number
     image: string
-}
+  }
 
 type CheckoutProps = {
-    items: IProduct[]
+    items: Item[]
+    addOrder: (user_id: number, address: string, city: string, state: string, zip_code: string, country: string) => void
 };
 
 type PersonalInfo = {
@@ -25,7 +29,7 @@ type PersonalInfo = {
     [key: string]: string;
 };
 
-const Checkout = ({ items }:CheckoutProps) => {
+const Checkout = ({ items, addOrder }: CheckoutProps) => {
     const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
         name: '',
         email: '',
@@ -43,6 +47,7 @@ const Checkout = ({ items }:CheckoutProps) => {
         (acc, item) => acc + item.price,
         0
     );
+
 
     const validateForm = (values: PersonalInfo) => {
         let errors: Partial<PersonalInfo> = {};
@@ -88,6 +93,7 @@ const Checkout = ({ items }:CheckoutProps) => {
         );
     }
 
+    const id = localStorage.getItem('user_id')
 
     return (
         <>
@@ -226,25 +232,33 @@ const Checkout = ({ items }:CheckoutProps) => {
                 <h2 className="text-xl font-bold mb-4">Checkout</h2>
                 <div className="flex flex-wrap">
                     {items.map((item) => (
-                        <div key={item.product_id} className="w-full p-2" style={{ maxWidth: "300px" }}>
-                            <div className="bg-gray-100 rounded-lg p-2">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-bold text-lg">{item.product_name}</h3>
-                                    <p className="text-gray-700 font-bold">${item.price.toFixed(2)}</p>
-                                </div>
-                                <img
-                                    src={item.image}
-                                    alt={item.product_name}
-                                    className="w-full h-32 object-cover rounded-lg shadow-md"
-                                />
-                            </div>
-                        </div>
+                <table key={item.product_id} className="table-auto w-full">
+                    <thead>
+                        <tr>
+                            <th className="px-4 py-2 font-bold text-left">Product</th>
+                            <th className="px-4 py-2 font-bold text-left">Price</th>
+                            <th className="px-4 py-2 font-bold text-left">Quantity</th>
+                            <th className="px-4 py-2 font-bold text-left">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="border px-4 py-2">{item.product_name}</td>
+                            <td className="border px-4 py-2">{item.price} DT</td>
+                            <td className="border px-4 py-2">{item.quantity}</td>
+                            <td className="border px-4 py-2">{totalPrice} DT</td>
+                        </tr>
+                    </tbody>
+                </table>
                     ))}
                 </div>
-                <p className="text-xl font-bold mt-4">Total: ${totalPrice.toFixed(2)}</p>
+                <p className="text-xl font-bold mt-4">Total: {totalPrice} DT</p>
                 <form onSubmit={handleSubmit}>
                     {/* Form fields for payment and shipping information */}
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 h-10 w-full rounded-md shadow-md mt-4">
+                    <button
+                        type="submit"
+                        onClick={()=>addOrder(Number(id),personalInfo.address,personalInfo.city,personalInfo.state,personalInfo.zip_code,personalInfo.country)}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 h-10 w-full rounded-md shadow-md mt-4">
                         Submit Order
                     </button>
                 </form>

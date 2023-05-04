@@ -31,7 +31,7 @@ type CartProps = {
     deleteCartItem: (user_id: number, cart_id: number) => void
 }
 
-const Cart: React.FC<CartProps> = ({ items, addToCart, reduceQuantity, deleteCartItem }) => {
+const Cart: React.FC<CartProps> = ({ items, addToCart, reduceQuantity, deleteCartItem}) => {
     const [quantities, setQuantities] = useState<{ [key: number]: number }>(
         Object.fromEntries(items.map((item) => [item.product_id, 1]))
     );
@@ -53,6 +53,7 @@ const Cart: React.FC<CartProps> = ({ items, addToCart, reduceQuantity, deleteCar
             deleteCartItem(item.user_id,item.cart_id)
         }
     };
+
     return (
         <div className="bg-white p-4 rounded-lg shadow-lg">
             <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
@@ -102,7 +103,7 @@ const Cart: React.FC<CartProps> = ({ items, addToCart, reduceQuantity, deleteCar
                 </>
             )}
             <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 h-10 w-40 rounded-md shadow-md mt-4">
-                <Link to="/checkout">Chekout</Link>
+                <Link to="/checkout">Checkout</Link>
             </button>
         </div>
     );
