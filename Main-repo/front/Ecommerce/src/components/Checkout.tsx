@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
+interface IProduct {
+    product_id: number
+    product_name: string
+    description: string
+    price: number
+    stock: number
+    image: string
+}
+
 type CheckoutProps = {
-    items: {
-        id: number;
-        product_name: string;
-        description: string;
-        price: number;
-        stock: number;
-        image: string;
-    }[];
+    items: IProduct[]
 };
 
 type PersonalInfo = {
@@ -23,7 +25,7 @@ type PersonalInfo = {
     [key: string]: string;
 };
 
-const Checkout: React.FC<CheckoutProps> = ({ items }) => {
+const Checkout = ({ items }:CheckoutProps) => {
     const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
         name: '',
         email: '',
@@ -224,7 +226,7 @@ const Checkout: React.FC<CheckoutProps> = ({ items }) => {
                 <h2 className="text-xl font-bold mb-4">Checkout</h2>
                 <div className="flex flex-wrap">
                     {items.map((item) => (
-                        <div key={item.id} className="w-full p-2" style={{ maxWidth: "300px" }}>
+                        <div key={item.product_id} className="w-full p-2" style={{ maxWidth: "300px" }}>
                             <div className="bg-gray-100 rounded-lg p-2">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="font-bold text-lg">{item.product_name}</h3>

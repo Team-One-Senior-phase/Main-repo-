@@ -7,7 +7,7 @@ const orderController= require('../Controllers/orderController.js')
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.put('/:userId', auth, updateUser);
+router.put('/:userId', updateUser);
 router.get('/:userId', auth, getUserById);
 router.delete('/:userId', auth, deleteUser);
 router.get('/' , getUsers);

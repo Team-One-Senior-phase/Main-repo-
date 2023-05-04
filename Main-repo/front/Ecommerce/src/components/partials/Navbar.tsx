@@ -3,15 +3,25 @@ import { Link } from 'react-router-dom';
 // @ts-ignore
 import logo from '../../assets/logo.png';
 import { FaShoppingCart } from 'react-icons/fa';
+import jwt from 'jwt-decode';
 
-interface Props {
-  username: string
-  isLoggedIn: boolean
-  handleLogout: () => void
+interface IUser {
+  user_id: number
+  user_name: string
+  email: string
+  password: string
+  adress: string
 }
 
-const Navbar = ({ username, isLoggedIn, handleLogout }: Props) => {
-  const [isLogoZoomed, setIsLogoZoomed] = useState(false);
+interface Props {
+  username:string
+  handleLogout: () => void
+  searchProduct: (query:string) => void
+}
+
+const Navbar = ({username, handleLogout, searchProduct }: Props) => {
+  const [isLogoZoomed, setIsLogoZoomed] = useState(false)
+  const [query,setQuery] = useState<string>("")
 
   const handleLogoClick = () => {
     setIsLogoZoomed(!isLogoZoomed);
@@ -20,8 +30,10 @@ const Navbar = ({ username, isLoggedIn, handleLogout }: Props) => {
   const logoclassNamees = `h-12 w-12 transition-all duration-500 transform ${isLogoZoomed ? 'scale-150' : ''
     }`;
 
+  const token = localStorage.getItem("JWT token")
+
   return (
-    isLoggedIn === false ?
+    token === null ?
       <nav className="bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -73,12 +85,15 @@ const Navbar = ({ username, isLoggedIn, handleLogout }: Props) => {
                 </div>
                 <input
                   type="text"
-                  className="block w-full py-2 pl-10 pr-3 leading-5 rounded-md border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={query}
+                  className="w-full py-2 pl-10 pr-3 leading-8 rounded-md border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Search"
+                  onChange={(e)=>setQuery(e.target.value)}
                 />
               </div>
               <button
                 type="submit"
+                onClick={()=>searchProduct(query)}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Search
@@ -101,21 +116,24 @@ const Navbar = ({ username, isLoggedIn, handleLogout }: Props) => {
             </div>
             <div className="flex-1 flex justify">
               <div className="flex items-center justify-center space-x-4">
-                <a href="#" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Orders</a>
-                <a href="#" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Payments</a>
-                <a href="#" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Cart</a>
+                <a href="/orders" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Orders</a>
+                <a href="/payement" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Payments</a>
+                <a href="/cart" className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Cart</a>
               </div>
             </div>
             <div className="md:flex md:items-center md:justify-end md:flex-1 lg:w-0">
               <div className="relative flex items-center flex-1">
-                <input
+              <input
                   type="text"
-                  className="block w-full py-2 pl-10 pr-3 leading-5 rounded-md border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={query}
+                  className="w-full py-2 pl-10 pr-3 leading-8 rounded-md border-gray-300 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Search"
+                  onChange={(e)=>setQuery(e.target.value)}
                 />
               </div>
               <button
                 type="submit"
+                onClick={()=>searchProduct(query)}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Search
@@ -129,7 +147,7 @@ const Navbar = ({ username, isLoggedIn, handleLogout }: Props) => {
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
                   <div className="py-1 rounded-md bg-white shadow-xs">
                     <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                    <a href="/setting" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                     <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => handleLogout()}>Logout</a>
                   </div>
                 </div>

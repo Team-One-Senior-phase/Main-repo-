@@ -15,6 +15,7 @@ const port = 3000
 // Use the routes 
 app.use('/api/users', users);
 app.use('/api/products', products);
+
 app.use('/api/cart',cart)
 sequelize.sync()
   .then(() => {

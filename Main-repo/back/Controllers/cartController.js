@@ -43,6 +43,20 @@ async function addToCart(req, res) {
   }
 }
 
+// get all items from cart
+async function getAllCartItems(req, res) {
+  try {
+    // Fetch all products from the database
+    const cart_items = await Cart.findAll();
+
+    // Send response with all products
+    res.status(200).json({ cart_items });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 // delete item from cart
 async function deleteCartItem(req, res) {
   const user_id = req.body.user_id;
@@ -66,14 +80,19 @@ async function getCartItems(user_id) {
   try {
     const cartItems = await Cart.findAll({
       where: { user_id },
-      include: [{ model: Product, attributes: ['product_name', 'image', 'price'] }]
+      include: [{ model: Product, attributes: ['product_name', 'image', 'price', 'stock'] }]
     });
     console.log(cartItems[0].dataValues.product.dataValues);
 
     return cartItems.map(cartItem => ({
-      id: cartItem.id,
+      cart_id: cartItem.cart_id,
       quantity: cartItem.quantity,
-      product: cartItem.Product
+      product_id:cartItem.product_id,
+      user_id:cartItem.user_id,
+      product_name: cartItem.dataValues.product.dataValues.product_name,
+      image: cartItem.dataValues.product.dataValues.image,
+      price: cartItem.dataValues.product.dataValues.price,
+      stock: cartItem.dataValues.product.dataValues.stock
     }));
   } catch (error) {
     console.error(error);
@@ -92,8 +111,6 @@ async function getCartItemsHandler(req, res) {
     res.status(500).json({ message: 'Internal server error' });
   }
 }
-
-
 
 
 module.exports = { addToCart , deleteCartItem, getCartItemsHandler};

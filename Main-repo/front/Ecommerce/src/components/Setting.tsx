@@ -1,69 +1,38 @@
 import React from 'react';
 
 const Setting = () => {
-    return (
-            <div className="container mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 items-left">
-                <div className="p-6 bg-white rounded-lg shadow-lg">
-                  <h6 className="text-2xl font-normal text-left mb-4">Adress</h6>
-                  <h6 className="text-2xl font-normal text-left mb-4">Phone</h6>
-                  <h6 className="text-2xl font-normal text-left mb-4">Password</h6>
-                </div>
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-1 gap-5 items-right">
-                <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
-                  <form className="space-y-4">
-                    <div>
-                      <label
-                        className="block text-gray-700 font-bold mb-2"
-                        htmlFor="name"
-                      >
-                        Name
-                      </label>
-                      <input
-                        className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="name"
-                        type="text"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="block text-gray-700 font-bold mb-2"
-                        htmlFor="email"
-                      >
-                        Email
-                      </label>
-                      <input
-                        className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="email"
-                        type="email"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="block text-gray-700 font-bold mb-2"
-                        htmlFor="password"
-                      >
-                        Password
-                      </label>
-                      <input
-                        className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="password"
-                        type="password"
-                      />
-                    </div>
-                    <div>
-                      <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </form>
-                </div>
-                </div>
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-4">Account Settings</h1>
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="px-4 py-5 sm:px-6">
+          <h2 className="text-lg font-medium leading-6 text-gray-900">Profile</h2>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">Update your profile information.</p>
+        </div>
+        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+          <dl className="sm:divide-y sm:divide-gray-200">
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Adress</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <input type="text" className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" />
+              </dd>
             </div>
-    )
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Phone</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <input type="email" className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" />
+              </dd>
+            </div>
+            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Password</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <input type="password" className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" />
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  )
 }
 export default Setting;
