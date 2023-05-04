@@ -11,9 +11,10 @@ import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import ProductDetails from './components/ProductDetails';
 import Orders from './components/Orders';
-import OneOrder from './components/OneOrder';
+import OneOrder from './components/OrderDetails';
 import Checkout from './components/Checkout';
 import jwt from 'jwt-decode';
+import OrderDetails from './components/OrderDetails';
 
 interface IUser {
   user_id: number
@@ -44,6 +45,18 @@ interface Item {
   image: string
 }
 
+interface IOrder {
+  order_id: number
+  user_id: number
+  order_date: Date
+  total_amount: string
+  shipping_address: string
+  shipping_city: string
+  shipping_zip_code: string
+  shipping_country: string
+  status: string
+}
+
 type TokenUser = {
   user_id: number,
   iat: number
@@ -65,8 +78,11 @@ const App: FC = () => {
   const [username, setUsername] = useState<string>("")
   const [userId, setUserId] = useState<number>(0)
   const [items, setItems] = useState<Item[]>([])
+  const [orders, setOrders] = useState<IOrder[]>([])
   const [searchedProducts, setSearchedProducts] = useState<IProduct[]>([])
   const [searchClicked, setSearchClicked] = useState<boolean>(false)
+  const [searchedOrder, setSearchedOrder] = useState<IOrder[]>([])
+  const [searchOrderClicked, setSearchOrderClicked] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
@@ -78,29 +94,11 @@ const App: FC = () => {
     }
   }
 
-  const getUserName = (): void => {
-    const token = localStorage.getItem("JWT token")
-    const tokenUser = jwt(JSON.stringify(token)) as TokenUser
-    let temp = users.filter(user => user.user_id === tokenUser.user_id)
-    if (temp.length !== 0) {
-      setUsername(temp[0].user_name)
-    }
-  }
-
-  const getUserId = (mail: string): void => {
-    const temp = users.filter(user => user.email === mail)
-    console.log(temp)
-    console.log(temp[0])
-    console.log(temp.length)
-    if (temp.length !== 0) {
-      setUserId(temp[0].user_id)
-    }
-    console.log(userId)
-  }
-
   const handleLogout = (): void => {
     navigate("/login")
     localStorage.removeItem('JWT token')
+    localStorage.removeItem('user_id')
+    localStorage.removeItem('user_name')
   }
 
   var registerUser = (name: string, mail: string, password: string): void => {
@@ -114,10 +112,12 @@ const App: FC = () => {
       .then(response => {
         setShowInvalidUser(false)
         navigate("/")
-        const token = response.data.token
-        const user = jwt(token) as TokenUser;
-        localStorage.setItem('JWT token', token)
+        const user = jwt(response.data.token) as TokenUser
+        localStorage.setItem('JWT token', response.data.token)
+        localStorage.setItem('user_id', user.user_id.toString())
         setUserId(user.user_id)
+        let temp = users.filter(user => user.user_id === user.user_id)
+        localStorage.setItem('user_name', temp[0].user_name)
       })
       .catch(() => setShowInvalidUser(true)
       )
@@ -171,7 +171,19 @@ const App: FC = () => {
         cart_id: cart_id
       }
     }).then(() => setUpdated(!updated))
-    .catch(error => console.log(error))
+      .catch(error => console.log(error))
+  }
+
+  const addOrder = (user_id: number, address: string, city: string, state: string, zip_code: string, country: string): void => {
+    axios.post("http://localhost:3000/api/cart/order", { user_id: user_id, address: address, city: city, state: state, zip_code: zip_code, country: country })
+      .then(() => setUpdated(!updated))
+      .catch(error => console.log(error))
+  }
+
+  const searchOrder = (id:number): void =>{
+    setSearchOrderClicked(true)
+    const temp = orders.filter(order => order.order_id===id)
+    setSearchedOrder(temp)
   }
 
   useEffect(() => {
@@ -191,6 +203,15 @@ const App: FC = () => {
     }
   }, [updated])
 
+  useEffect(() => {
+    const token = localStorage.getItem("JWT token")
+    if (token !== null) {
+      const user = jwt(JSON.stringify(token)) as TokenUser
+      console.log(user.user_id)
+      axios.get(`http://localhost:3000/api/users/orders/${user.user_id}`).then(response => { setOrders(response.data); console.log(response.data) })
+    }
+  }, [updated])
+
   return (
     <>
       <Navbar username={username} handleLogout={handleLogout} searchProduct={searchProduct} />
@@ -198,14 +219,15 @@ const App: FC = () => {
         {searchClicked ? <Route path='/' element={<ProductList products={searchedProducts} getProduct={getProduct} addToCart={addToCart} />} />
           : <Route path='/' element={<ProductList products={products} getProduct={getProduct} addToCart={addToCart} />} />}
         <Route path='/register' element={<Register registerUser={registerUser} users={users} />} />
-        <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} getUserName={getUserName} />} />
+        <Route path='/login' element={<Login loginUser={loginUser} showInvalidUser={showInvalidUser} />} />
         <Route path='/cart' element={<Cart items={items} addToCart={addToCart} reduceQuantity={reduceQuantity} deleteCartItem={deleteCartItem} />} />
         <Route path='/productDetails' element={<ProductDetails product={oneProduct} addToCart={addToCart} />} />
-        <Route path='/resetPassword' element={<ResetPassword users={users} userId={userId} getUserId={getUserId} updatePassword={updatePassword} />} />
+        <Route path='/resetPassword' element={<ResetPassword users={users} updatePassword={updatePassword} />} />
         <Route path='/setting' element={<Setting />} />
-        <Route path='/checkout' element={<Checkout items={items} />} />
-        <Route path='/orders' element={<Orders />} />
-        <Route path='/order' element={<OneOrder />} />
+        <Route path='/checkout' element={<Checkout items={items} addOrder={addOrder} />} />
+        {searchOrderClicked ?<Route path='/orders' element={<Orders orders={searchedOrder} searchOrder={searchOrder} />} />
+        :<Route path='/orders' element={<Orders orders={orders} searchOrder={searchOrder} />} />}
+        <Route path='/order' element={<OrderDetails />}/>      
       </Routes>
 
     </>

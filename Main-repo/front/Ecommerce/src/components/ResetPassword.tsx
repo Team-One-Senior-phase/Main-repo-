@@ -10,22 +10,19 @@ interface IUser {
 
 interface Props {
     users: IUser[]
-    userId:number
-    getUserId: (mail: string) => void
     updatePassword: (id: number, newPassword: string) => void
 }
 
-const ResetPassword = ({ users, userId, getUserId, updatePassword }: Props) => {
+const ResetPassword = ({ users, updatePassword }: Props) => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
-
+    const id = localStorage.getItem('user_id')
     const handleReset = (mail: string, password: string, confirm: string): string => {
-        getUserId(mail)
         const exist = users.find((user) => user.email === mail)
         if (exist) {
             if (password === confirm) {
-                updatePassword(userId, password)
+                updatePassword(Number(id), password)
                 return ("password updated successfully")
             }
             else {

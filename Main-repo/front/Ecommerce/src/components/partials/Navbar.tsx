@@ -30,7 +30,9 @@ const Navbar = ({username, handleLogout, searchProduct }: Props) => {
   const logoclassNamees = `h-12 w-12 transition-all duration-500 transform ${isLogoZoomed ? 'scale-150' : ''
     }`;
 
-  const token = localStorage.getItem("JWT token")
+  let token = localStorage.getItem("JWT token")
+
+  let name = localStorage.getItem('user_name')
 
   return (
     token === null ?
@@ -93,7 +95,7 @@ const Navbar = ({username, handleLogout, searchProduct }: Props) => {
               </div>
               <button
                 type="submit"
-                onClick={()=>searchProduct(query)}
+                onClick={()=>{searchProduct(query);setQuery("")}}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Search
@@ -133,7 +135,7 @@ const Navbar = ({username, handleLogout, searchProduct }: Props) => {
               </div>
               <button
                 type="submit"
-                onClick={()=>searchProduct(query)}
+                onClick={()=>{searchProduct(query);setQuery("")}}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 Search
@@ -142,11 +144,11 @@ const Navbar = ({username, handleLogout, searchProduct }: Props) => {
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <div className="ml-3 relative">
                 <div>
-                  <a className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Hello, {username}</a>
+                  <a className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Hello, {name}</a>
                 </div>
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
                   <div className="py-1 rounded-md bg-white shadow-xs">
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                    <a href="/" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                     <a href="/setting" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                     <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => handleLogout()}>Logout</a>
                   </div>

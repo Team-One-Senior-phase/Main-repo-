@@ -40,11 +40,11 @@ async function createOrder(req, res) {
           price: price,
           amount: amount,
         });
-  
+        
         // reduce the product stock
         await product.update({ stock: product.stock - quantity });
       }
-  
+      
       // update missing fields in the user table
       await user.update({
         phone: req.body.phone || user.phone || '',
@@ -54,7 +54,7 @@ async function createOrder(req, res) {
         zip_code: req.body.zip_code || user.zip_code || '',
         country: req.body.country || user.country || '',
       });
-  
+     
       // create the order
       const orderData = {
         user_id: user_id,
@@ -71,7 +71,7 @@ async function createOrder(req, res) {
       if (!req.body.order_date) {
         orderData.order_date = new Date();
       }
-  
+      console.log(orderData)
       const order = await Order.create(orderData);
   
       // clear the cart
@@ -88,4 +88,27 @@ async function createOrder(req, res) {
     }
   }
 
-module.exports = { createOrder };
+
+  async function getOrdersByUserId(req, res) {
+    const user_id = req.params.user_id;
+  
+    try {
+      const user = await User.findByPk(user_id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const orders = await Order.findAll({
+        where: {
+          user_id: user_id,
+        },
+      });
+  
+      res.status(200).json(orders);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+module.exports = { createOrder, getOrdersByUserId };
