@@ -40,11 +40,11 @@ async function createOrder(req, res) {
           price: price,
           amount: amount,
         });
-  
+        
         // reduce the product stock
         await product.update({ stock: product.stock - quantity });
       }
-  
+      
       // update missing fields in the user table
       await user.update({
         phone: req.body.phone || user.phone || '',
@@ -54,24 +54,24 @@ async function createOrder(req, res) {
         zip_code: req.body.zip_code || user.zip_code || '',
         country: req.body.country || user.country || '',
       });
-  
+     
       // create the order
       const orderData = {
         user_id: user_id,
         total_amount: totalAmount,
         status: 'Pending',
-        shipping_address: user.address,
-        shipping_city: user.city,
-        shipping_state: user.state,
-        shipping_zip_code: user.zip_code,
-        shipping_country: user.country,
+        shipping_address: req.body.address,
+        shipping_city: req.body.city,
+        shipping_state: req.body.state,
+        shipping_zip_code: req.body.zip_code,
+        shipping_country: req.body.country,
         order_items: orderItems,
       };
   
       if (!req.body.order_date) {
         orderData.order_date = new Date();
       }
-  
+      console.log(orderData)
       const order = await Order.create(orderData);
   
       // clear the cart
@@ -88,4 +88,27 @@ async function createOrder(req, res) {
     }
   }
 
-module.exports = { createOrder };
+
+  async function getOrdersByUserId(req, res) {
+    const user_id = req.params.user_id;
+  
+    try {
+      const user = await User.findByPk(user_id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const orders = await Order.findAll({
+        where: {
+          user_id: user_id,
+        },
+      });
+  
+      res.status(200).json(orders);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+module.exports = { createOrder, getOrdersByUserId };
