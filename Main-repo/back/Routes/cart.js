@@ -6,8 +6,10 @@ const cartController = require('../Controllers/cartController.js');
 const orderController= require('../Controllers/orderController.js')
 
 
-router.post('/',auth, cartController.addToCart)
-router.delete('/',auth, cartController.deleteCartItem)
-router.post('/order',auth , orderController.createOrder)
+router.post('/', cartController.addToCart)
+router.delete('/',cartController.deleteCartItem)
+router.post('/order',orderController.createOrder)
+router.get('/:user_id',cartController.getCartItemsHandler)
+
 
 module.exports = router;

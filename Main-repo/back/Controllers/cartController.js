@@ -62,5 +62,38 @@ async function deleteCartItem(req, res) {
   }
 }
 
+async function getCartItems(user_id) {
+  try {
+    const cartItems = await Cart.findAll({
+      where: { user_id },
+      include: [{ model: Product, attributes: ['product_name', 'image', 'price'] }]
+    });
+    console.log(cartItems[0].dataValues.product.dataValues);
 
-module.exports = { addToCart , deleteCartItem};
+    return cartItems.map(cartItem => ({
+      id: cartItem.id,
+      quantity: cartItem.quantity,
+      product: cartItem.Product
+    }));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error getting cart items');
+  }
+}
+
+async function getCartItemsHandler(req, res) {
+  const user_id = req.params.user_id;
+
+  try {
+    const cartItems = await getCartItems(user_id);
+    res.status(200).json(cartItems);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+
+
+
+module.exports = { addToCart , deleteCartItem, getCartItemsHandler};
