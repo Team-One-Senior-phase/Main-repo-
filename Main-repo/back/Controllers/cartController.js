@@ -43,6 +43,20 @@ async function addToCart(req, res) {
   }
 }
 
+// get all items from cart
+async function getAllCartItems(req, res) {
+  try {
+    // Fetch all products from the database
+    const cart_items = await Cart.findAll();
+
+    // Send response with all products
+    res.status(200).json({ cart_items });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 // delete item from cart
 async function deleteCartItem(req, res) {
   const user_id = req.body.user_id;
@@ -62,5 +76,70 @@ async function deleteCartItem(req, res) {
   }
 }
 
+async function getCartItems(user_id) {
+  try {
+    const cartItems = await Cart.findAll({
+      where: { user_id },
+      include: [{ model: Product, attributes: ['product_name', 'image', 'price', 'stock'] }]
+    });
+    console.log(cartItems[0].dataValues.product.dataValues);
 
-module.exports = { addToCart , deleteCartItem};
+    return cartItems.map(cartItem => ({
+      cart_id: cartItem.cart_id,
+      quantity: cartItem.quantity,
+      product_id:cartItem.product_id,
+      user_id:cartItem.user_id,
+      product_name: cartItem.dataValues.product.dataValues.product_name,
+      image: cartItem.dataValues.product.dataValues.image,
+      price: cartItem.dataValues.product.dataValues.price,
+      stock: cartItem.dataValues.product.dataValues.stock
+    }));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error getting cart items');
+  }
+}
+
+async function getCartItemsHandler(req, res) {
+  const user_id = req.params.user_id;
+
+  try {
+    const cartItems = await getCartItems(user_id);
+    res.status(200).json(cartItems);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+// Update an existing cart by id 
+async function updateQuantity(req, res) {
+  try {
+    const { cart_id } = req.params;
+    const {quantity} = req.body;
+      
+    // Check if cart exists
+    const cart = await Cart.findByPk(cart_id);
+    if (!cart) {
+      return res.status(404).json({ message: 'item not found' });
+    }
+
+    // Check if new quantity is valid
+    if (cart.quantity===1 && quantity===0) {
+      return res.status(404).json({ message: 'item quantity cannot be less then 1' });
+    }
+
+    if (cart.quantity=== cart.stock && quantity===cart.stock+1) {
+      return res.status(404).json({ message: 'insufficient stock' });
+    }
+
+    //update quantity
+    cart.quantity = quantity
+    await cart.save()
+    res.status(200).json({ message: 'Quantity updated successfully', cart });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+module.exports = { addToCart, getAllCartItems, deleteCartItem, getCartItemsHandler, updateQuantity };

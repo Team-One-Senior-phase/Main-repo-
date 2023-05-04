@@ -60,11 +60,11 @@ async function createOrder(req, res) {
         user_id: user_id,
         total_amount: totalAmount,
         status: 'Pending',
-        shipping_address: user.address,
-        shipping_city: user.city,
-        shipping_state: user.state,
-        shipping_zip_code: user.zip_code,
-        shipping_country: user.country,
+        shipping_address: req.body.address,
+        shipping_city: req.body.city,
+        shipping_state: req.body.state,
+        shipping_zip_code: req.body.zip_code,
+        shipping_country: req.body.country,
         order_items: orderItems,
       };
   

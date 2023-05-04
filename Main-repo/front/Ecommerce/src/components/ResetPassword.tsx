@@ -1,9 +1,41 @@
 import React, { useState, FormEvent } from 'react';
 
-const ResetPassword = () => {
+interface IUser {
+    user_id: number
+    user_name: string
+    email: string
+    password: string
+    adress: string
+}
+
+interface Props {
+    users: IUser[]
+    userId:number
+    getUserId: (mail: string) => void
+    updatePassword: (id: number, newPassword: string) => void
+}
+
+const ResetPassword = ({ users, userId, getUserId, updatePassword }: Props) => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+    const handleReset = (mail: string, password: string, confirm: string): string => {
+        getUserId(mail)
+        const exist = users.find((user) => user.email === mail)
+        if (exist) {
+            if (password === confirm) {
+                updatePassword(userId, password)
+                return ("password updated successfully")
+            }
+            else {
+                return ("confirm password didn't match with the password")
+            }
+        }
+        else {
+            return ("invalid user")
+        }
+    }
 
     return (
         <div className="w-full max-w-xs mx-auto mt-8">
@@ -52,10 +84,14 @@ const ResetPassword = () => {
                     <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
+                        onClick={() => handleReset(email, password, confirmPassword)}
                     >
                         Reset Password
                     </button>
                 </div>
+                {handleReset(email, password, confirmPassword)==="password updated successfully"?<p style={{color:"green"}}>Password updated successfully</p>:""}
+                {handleReset(email, password, confirmPassword)==="confirm password didn't match with the password"?<p style={{color:"red"}}>Confirm password didn't match with the password</p>:""}
+                {handleReset(email, password, confirmPassword)==="invalid user"?<p style={{color:"red"}}>Invalid user</p>:""}
             </form>
         </div>
     );
